@@ -1,0 +1,70 @@
+#version 410 core
+
+layout(vertices = 4) out;
+
+uniform vec4 positionTexture;
+
+uniform uint maxTessellationLevel;
+
+uniform int quadrantStep;
+
+void main(void)
+{
+	float tessellationStep = pow(2.0, maxTessellationLevel);
+
+	int relativeQuadrantS = int((gl_in[0].gl_Position.x - 0.5) / tessellationStep - (positionTexture.x - 0.5) / tessellationStep);
+	int relativeQuadrantT = int((gl_in[0].gl_Position.z - 0.5) / tessellationStep - (positionTexture.z - 0.5) / tessellationStep);
+
+	uint chebyshevDistance = max(abs(relativeQuadrantS), abs(relativeQuadrantT));
+
+	// outermost element of step elements and outermost side and on the left side
+	bool leftBorder = ((abs(relativeQuadrantS) + 1) % quadrantStep == 0) && (abs(relativeQuadrantS) == chebyshevDistance) && (relativeQuadrantS <= 0);
+	bool rightBorder = ((abs(relativeQuadrantS) + 1) % quadrantStep == 0) && (abs(relativeQuadrantS) == chebyshevDistance) && (relativeQuadrantS >= 0);
+
+	bool bottomBorder = ((abs(relativeQuadrantT) + 1) % quadrantStep == 0) && (abs(relativeQuadrantT) == chebyshevDistance) && (relativeQuadrantT <= 0);
+	bool topBorder = ((abs(relativeQuadrantT) + 1) % quadrantStep == 0) && (abs(relativeQuadrantT) == chebyshevDistance) && (relativeQuadrantT >= 0);
+
+	relativeQuadrantS /= quadrantStep;
+	
+	relativeQuadrantT /= quadrantStep;
+
+	chebyshevDistance /= quadrantStep;
+
+	uint decreaseLeft = min(maxTessellationLevel + 1, chebyshevDistance);
+	
+	uint decreaseRight = min(maxTessellationLevel + 1, chebyshevDistance);
+	
+	uint decreaseTop = min(maxTessellationLevel + 1, chebyshevDistance);
+	
+	uint decreaseBottom = min(maxTessellationLevel + 1, chebyshevDistance);
+	
+	uint decreaseInnner = min(maxTessellationLevel + 1, chebyshevDistance);
+
+	if (leftBorder)
+	{
+		decreaseLeft = min(maxTessellationLevel + 1, decreaseLeft + 1);
+	}	
+	if (rightBorder)
+	{
+		decreaseRight = min(maxTessellationLevel + 1, decreaseRight + 1);
+	}
+	
+	if (bottomBorder)
+	{
+		decreaseBottom = min(maxTessellationLevel + 1, decreaseBottom + 1);
+	}
+	if (topBorder)
+	{
+		decreaseTop = min(maxTessellationLevel + 1, decreaseTop + 1);
+	}
+
+	gl_TessLevelOuter[0] = pow(2.0, maxTessellationLevel + 1 - decreaseLeft);
+	gl_TessLevelOuter[1] = pow(2.0, maxTessellationLevel + 1 - decreaseBottom);
+	gl_TessLevelOuter[2] = pow(2.0, maxTessellationLevel + 1 - decreaseRight);
+	gl_TessLevelOuter[3] = pow(2.0, maxTessellationLevel + 1 - decreaseTop);
+
+	gl_TessLevelInner[0] = pow(2.0, maxTessellationLevel + 1 - decreaseInnner);
+	gl_TessLevelInner[1] = pow(2.0, maxTessellationLevel + 1 - decreaseInnner);
+
+	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+}

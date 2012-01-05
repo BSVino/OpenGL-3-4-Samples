@@ -1,0 +1,12 @@
+How to make and run the examples:
+---------------------------------
+
+1. Please make sure, you have installed a Windows OpenGL 3.2 driver. For some examples you need a OpenGL 4.1 driver.
+2. Please make sure, you have the needed GLEW files in the Binaries, windows/External/lib and windows/External/include directories.
+   Currently, pre-build binary and header files are already located in these directories (32 bit).
+   Please replace them with your own binary and header files created/taken from the GLEW website (http://glew.sourceforge.net/).
+   Please make sure that you install GLEW version 1.7.0 or later.
+3. Go to the windows folder and open OpenGL.sln with Visual C++ 2008 or later. Build and run the examples.
+4. You can also go to the Binaries folder and execute the examples by e.g. typing Example01.exe
+
+Norbert Nopper (norbert@nopper.tv)
