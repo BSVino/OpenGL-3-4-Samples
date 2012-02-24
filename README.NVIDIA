@@ -1,8 +1,0 @@
-If the examples are not working with your NVIDIA card:
-------------------------------------------------------
-
-If the OpenGL 3.2 examples are not working, please try the following:
-- Replace "#version 150" in the shaders with "#version 330"
-- Init GLUS with "glusPrepareContext(3, 3, GLUS_FORWARD_COMPATIBLE_BIT);"
-
-Norbert Nopper (norbert@nopper.tv)
